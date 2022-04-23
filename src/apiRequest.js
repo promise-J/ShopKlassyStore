@@ -12,6 +12,13 @@ export const publicRequest = axios.create({
     
 })
 
+export const imgRequest = axios.create({
+    baseUrl: BASE_URL,
+    headers: {
+        "Content-Type": "multipart/form-data"
+    }
+})
+
 // export const userRequest = axios.create({
 //     baseURL: BASE_URL,
 //     header: {authorization: token}
