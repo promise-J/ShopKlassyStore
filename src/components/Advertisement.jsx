@@ -14,9 +14,9 @@ const Container = styled.div`
 const Advertisement = () => {
     return (
         <Container>
-            <marquee>
+            <p>
               Get discounts up to 30%, 50% and even 70% on our web page. For further enquiry, make sure to register and include your email as one of our lucky winners. Hurray!!!
-            </marquee>
+            </p>
         </Container>
     )
 }

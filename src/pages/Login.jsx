@@ -3,7 +3,7 @@ import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
-import Advertisement from "../components/Advertisement"
+// import Advertisement from "../components/Advertisement"
 import Navbar from "../components/Navbar"
 
 import Pop3 from '../images/payment.png'

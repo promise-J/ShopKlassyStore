@@ -1,6 +1,6 @@
 // import { Add, Remove } from "@material-ui/icons"
 import styled from "styled-components"
-import Advertisement from "../components/Advertisement"
+// import Advertisement from "../components/Advertisement"
 import Footer from "../components/Footer"
 import CartProduct from "../components/CartProduct"
 import Navbar from "../components/Navbar"

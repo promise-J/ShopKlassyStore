@@ -2,7 +2,7 @@ import {useState} from 'react'
 import styled from 'styled-components'
 import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
-import { mobile, tablet } from "../responsive"
+import {  tablet } from "../responsive"
 import {useSelector} from 'react-redux'
 import { ArrowDownward, ArrowUpward } from '@material-ui/icons'
 import { CircularProgress } from '@material-ui/core'
@@ -95,7 +95,7 @@ const Profile = () => {
     const [user, setUser] = useState(null)
 
     const {img, email, password, username} = data
-
+     console.log(user)
     
     const handleImgChange = async(e)=>{
         const file = e.target.files[0]

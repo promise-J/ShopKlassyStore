@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useLocation } from 'react-router-dom'
 import styled from "styled-components"
 import Product from '../Product'
 import './favorite.css'
@@ -14,7 +13,6 @@ const Container = styled.div`
 `
 
 const FavoriteProduct = ()=>{
-    const {currentUser} = useSelector(state=> state.user)
     const [products, setProducts] = useState([])
     useEffect(()=>{
         const getProducts = async()=>{
