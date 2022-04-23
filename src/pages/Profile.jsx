@@ -92,6 +92,7 @@ const Profile = () => {
     const [data, setData] = useState(initialState)
     const [imgErr, setImgErr] = useState('')
     const [copied, setCopied] = useState(false)
+    const [user, setUser] = useState(null)
 
     const {img, email, password, username} = data
 
@@ -141,17 +142,17 @@ const Profile = () => {
                     setData({...data, img: null})
                     setImgPrev('')
                     setImgLoad(false)
-                    // setUser(update.data)
-                    // setData({...initialState})
+                    setUser(update.data)
+                    setData({...initialState})
                 }
                 setData({...initialState})
             }else{
                 setImgLoad(true)
-                const update = await publicRequest.put(`/user/${currentUser._id}`, {password: password && password, email, username, status, isAdmin})
+                const update = await publicRequest.put(`/user/${currentUser._id}`, {password: password && password, email, username})
                 // console.log(res)
                 setImgLoad(false)
-                // setUser(update.data)
-                // setData({...initialState})
+                setUser(update.data)
+                setData({...initialState})
             }
             // return navigate('/users')
             // console.log(data)
