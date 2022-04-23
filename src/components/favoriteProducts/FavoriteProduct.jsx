@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+// import { useSelector } from 'react-redux'
 import styled from "styled-components"
 import Product from '../Product'
 import './favorite.css'

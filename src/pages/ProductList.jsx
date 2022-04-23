@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import Navbar from "../components/Navbar"
-import Advertisement from "../components/Advertisement"
+// import Advertisement from "../components/Advertisement"
 import Products from "../components/Products"
 import Newsletter from "../components/Newsletter"
 import Footer from "../components/Footer"
