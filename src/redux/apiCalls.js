@@ -1,11 +1,16 @@
 import { publicRequest } from "../apiRequest"
 import { loginFailure, loginStart, loginSuccess, logoutFailure, logoutStart, logoutSuccess } from "./userRedux"
+import Cookies from 'univeral-cookie'
+
+const cookie = new Cookies()
+
 
 export const login = async(dispatch, user)=>{
     dispatch(loginStart())
     try {
         const res = await publicRequest.post('/auth/login', user)
-        dispatch(loginSuccess(res.data))
+        cookie.set('shopKlassToken', res.data.accessToken)
+        dispatch(loginSuccess(res.data.user))
     } catch (error) {
         dispatch(loginFailure())
     }
