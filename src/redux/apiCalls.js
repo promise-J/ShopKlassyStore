@@ -1,6 +1,6 @@
 import { publicRequest } from "../apiRequest"
 import { loginFailure, loginStart, loginSuccess, logoutFailure, logoutStart, logoutSuccess } from "./userRedux"
-import Cookies from 'univeral-cookie'
+import Cookies from 'universal-cookie'
 
 const cookie = new Cookies()
 
@@ -9,15 +9,18 @@ export const login = async(dispatch, user)=>{
     dispatch(loginStart())
     try {
         const res = await publicRequest.post('/auth/login', user)
-        cookie.set('shopKlassToken', res.data.accessToken)
+        cookie.set('shopKlassToken', res.data.accessToken, {path: '/'})
         dispatch(loginSuccess(res.data.user))
+        console.log(cookie.get('shopKlassToken'))
     } catch (error) {
         dispatch(loginFailure())
     }
 }
 
 export const fetchUser = async()=>{
-    const res = await publicRequest.get('/auth/info')
+    const res = await publicRequest.get('/auth/info', {headers: {
+        Authorization: cookie.get('shopKlassToken')
+    }})
     return res.data.user
 }
 
@@ -34,6 +37,7 @@ export const logout = async(dispatch)=>{
     dispatch(logoutStart())
     try {
         await publicRequest.get("/auth/logout")
+        cookie.remove('shopKlassToken')
         dispatch(logoutSuccess())
     } catch (error) {
         dispatch(logoutFailure())
