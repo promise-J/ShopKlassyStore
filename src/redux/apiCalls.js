@@ -11,7 +11,6 @@ export const login = async(dispatch, user)=>{
         const res = await publicRequest.post('/auth/login', user)
         cookie.set('shopKlassToken', res.data.accessToken, {path: '/'})
         dispatch(loginSuccess(res.data.user))
-        console.log(cookie.get('shopKlassToken'))
     } catch (error) {
         dispatch(loginFailure())
     }

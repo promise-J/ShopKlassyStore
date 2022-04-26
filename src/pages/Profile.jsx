@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import styled from 'styled-components'
 import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
@@ -57,6 +57,7 @@ const LeftInfo = styled.div`
 `
 const RightInfo = styled.div`
     flex: 3;
+    width: 100%;
 `
 const LeftInfoItems = styled.div`
     display: flex;
@@ -73,15 +74,27 @@ const LeftInfoItemValue = styled.span`
 `
 const LeftInfoItemValueStatus = styled.span`
     font-weight: 600;
+    font-size: 12px;
     color: ${props=> props.verified === 'true' ? 'green' : 'red'}
 `
 
 const FormItem = styled.div`
-    background: red;
     height: 80%;
-    width: 90%;
+    width: 100%;
+    margin: auto;
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
 `
 
+const FormItemInput = styled.input`
+    width: 45%;
+    margin: 5px;
+`
+const FormItemButton = styled.button`
+    width: 45%;
+    margin: 5px;
+`
 
 const Profile = () => {
     const initialState = {img: null, username: '', email: '', password: ''}
@@ -93,9 +106,21 @@ const Profile = () => {
     const [imgErr, setImgErr] = useState('')
     const [copied, setCopied] = useState(false)
     const [user, setUser] = useState(null)
+    const [phoneNumber, setPhoneNumber] = useState(0)
+    const [cEmail, setCEmail] = useState('')
+    const [code, setCode] = useState('')
+    const [viewCodeArea, setViewCodeArea] = useState(false)
 
     const {img, email, password, username} = data
-     console.log(user)
+    
+    useEffect(()=>{
+        setUser(currentUser)
+    },[currentUser])
+
+    const handleInputChange = (e)=>{
+        const {value, name} = e.target
+        setData({...data, [name]: value})
+    }
     
     const handleImgChange = async(e)=>{
         const file = e.target.files[0]
@@ -125,7 +150,7 @@ const Profile = () => {
   
     const handleSubmit = async(e)=>{
         e.preventDefault()
-
+         console.log(data)
         try {
             let formData = new FormData()
             formData.append('file', img)
@@ -162,7 +187,26 @@ const Profile = () => {
             }
     }
 
+    const verifyEmail = async()=>{
+        if(!phoneNumber) return
+        
+        try{
+            console.log(phoneNumber)
+            const res = await publicRequest.post('/user/generate/code', {phoneNumber})
+            if(res.status===200){
+                setViewCodeArea(true)
+            }
+        }catch(error){
+            console.log(error)
+        }
+    }
 
+    const confirmVerification = async()=>{
+        if(!code) return
+        const res = await publicRequest.post('/user/verify/code', {code})
+        setViewCodeArea(false)
+        setUser(res.data.user)
+    }
 
 
   return (
@@ -172,29 +216,39 @@ const Profile = () => {
         <Wrapper>
             <Left>
                 <ImgContainer>
-                  <Img src={currentUser.img} />
+                  <Img src={user?.img} />
                 </ImgContainer>
                 <LeftInfo>
                     <LeftInfoItems>
                         <LeftInfoItem>Username</LeftInfoItem>
-                        <LeftInfoItemValue>{currentUser.username}</LeftInfoItemValue>
+                        <LeftInfoItemValue>{user?.username}</LeftInfoItemValue>
                     </LeftInfoItems>
                     <LeftInfoItems>
                         <LeftInfoItem>Email</LeftInfoItem>
-                        <LeftInfoItemValue>{currentUser.email}</LeftInfoItemValue>
+                        <LeftInfoItemValue>{user?.email}</LeftInfoItemValue>
                     </LeftInfoItems>
                     <LeftInfoItems>
-                        <LeftInfoItem>Favourite Products:   {currentUser.favorite.length}</LeftInfoItem>
+                        <LeftInfoItem>Favourite Products:   {user?.favorite.length}</LeftInfoItem>
                     </LeftInfoItems>
                     <LeftInfoItems>
                         <LeftInfoItem>Status</LeftInfoItem>
-                        <LeftInfoItemValueStatus verified={currentUser.status ? 'true' : 'false'} >{currentUser.status ? 'Your account is verified' : 'Please Verify your account'}</LeftInfoItemValueStatus>
-                        {currentUser.status && <LeftInfoItemValueStatus onClick={()=> setShowVerify(!showVerify)} style={{fontSize: 13, margin: '8px 0'}} verified={currentUser.status ? 'true' : 'false'} ><span style={{background: 'rgb(223, 221, 221)', padding: 2, marginTop: 4, cursor: 'pointer'}}>Click here to Verify your account</span>{!showVerify ? <ArrowDownward style={{fontSize: 12}} /> : <ArrowUpward style={{fontSize: 12}} />}</LeftInfoItemValueStatus>}
+                        <LeftInfoItemValueStatus verified={user?.status === 'active' ? 'true' : 'false'} >{user?.status === 'active' ? 'Your account is verified' : 'Please Verify your account'}</LeftInfoItemValueStatus>
+                        {user?.status === 'pending' && <LeftInfoItemValueStatus onClick={()=> setShowVerify(!showVerify)} style={{fontSize: 12, margin: '8px 0'}} verified={user?.status==='active' ? 'true' : 'false'} ><span style={{background: 'rgb(223, 221, 221)', padding: 2, marginTop: 4, cursor: 'pointer', fontSize: 10}}>Click here to Verify your account</span>{!showVerify ? <ArrowDownward style={{fontSize: 10}} /> : <ArrowUpward style={{fontSize: 10}} />}</LeftInfoItemValueStatus>}
                         {showVerify && 
-                        <div style={{}}>
-                            <input style={{padding: 3}} placeholder='Enter Your Email' />
-                            <button style={{padding: 3, marginLeft: 3}}>Verify</button>
+                        <>
+                        { !viewCodeArea &&
+                            <div style={{}}>
+                            <input style={{padding: 3}} onChange={(e)=> setPhoneNumber(e.target.value)} placeholder='Enter Phone Number' />
+                            <button style={{padding: 3, marginLeft: 3}} onClick={verifyEmail}>Verify</button>
                         </div>
+                        }
+                        { viewCodeArea &&
+                        <div style={{}}>
+                            <input onChange={(e)=> setCode(e.target.value)} style={{padding: 3}} placeholder='Enter Code' />
+                            <button onClick={confirmVerification} style={{padding: 3, marginLeft: 3, marginTop: 5}} >Submit</button>
+                        </div>
+                        }
+                        </>
                         }
 
                         </LeftInfoItems>
@@ -203,7 +257,7 @@ const Profile = () => {
                            <LeftInfoItem>Referral Code</LeftInfoItem>
                            <div>
                            <p style={{fontSize: 12}}>Your have refered 4 persons. Your refferal earnings is $45.</p>
-                           <span style={{fontSize: 9, textDecoration: 'underline'}}>{`${process.env.REACT_APP_PUBLIC_URL}/auth/register/ref=${currentUser._id}`}</span>
+                           <span style={{fontSize: 9, textDecoration: 'underline'}}>{`${process.env.REACT_APP_PUBLIC_URL}/auth/register/ref=${user?._id}`}</span>
                            <button style={{border: 'none', outline: 'none', marginLeft: 5, padding: 5, background: copied && 'green', color: copied && 'white'}} onClick={(copyToClipBoard)}>{copied ? 'Copied' : 'Copy' }</button>
                            </div>
                         </LeftInfoItemValue>
@@ -218,8 +272,11 @@ const Profile = () => {
                 </ImgContainer>
                 <RightInfo>
                     <form onSubmit={handleSubmit}>
-                      <FormItem>
-                      
+                      <FormItem onSubmit={handleSubmit}>
+                        <FormItemInput onChange={handleInputChange} name='username' value={username} style={{width: '92%'}} type="text" placeholder='Username' />
+                        <FormItemInput onChange={handleInputChange} name='email' value={email} type="text" placeholder='Email' />
+                        <FormItemInput onChange={handleInputChange} name='password' value={password} type="text" placeholder='password' />
+                        <FormItemButton style={{width: '92%'}}>Save</FormItemButton>
                       </FormItem>
                     </form>
                 </RightInfo>
