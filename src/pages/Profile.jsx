@@ -107,7 +107,7 @@ const Profile = () => {
     const [copied, setCopied] = useState(false)
     const [user, setUser] = useState(null)
     const [phoneNumber, setPhoneNumber] = useState(0)
-    const [cEmail, setCEmail] = useState('')
+    // const [cEmail, setCEmail] = useState('')
     const [code, setCode] = useState('')
     const [viewCodeArea, setViewCodeArea] = useState(false)
 

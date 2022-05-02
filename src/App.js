@@ -34,7 +34,7 @@ function App() {
           setFetching(false);
         });
       };
-      getUser();
+      isLogged && getUser();
     } else {
       setFetching(false);
     }

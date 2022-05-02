@@ -4,6 +4,7 @@ import styled from "styled-components"
 import Product from '../Product'
 import './favorite.css'
 import {publicRequest} from '../../apiRequest'
+import { useSelector } from 'react-redux'
 
 
 const Container = styled.div`
@@ -14,15 +15,17 @@ const Container = styled.div`
 
 const FavoriteProduct = ()=>{
     const [products, setProducts] = useState([])
+    const {isLogged} = useSelector(state=> state.user)
     useEffect(()=>{
         const getProducts = async()=>{
             const res = await publicRequest.get('/user/fetch/favorite')
             setProducts(res.data)
         }
-        getProducts()
-    },[])
+        isLogged && getProducts()
+    },[isLogged])
 
 
+    if(products.length > 0){
    return (
     <Container>
     {
@@ -30,8 +33,15 @@ const FavoriteProduct = ()=>{
             <Product setProducts={setProducts} key={product._id} product={product} />
         )) : <h2 style={{margin: 'auto', fontSize: 24, opacity: 0.5}}>You dont have any favorite Product</h2>
     }
-</Container>
-   )
+    </Container>
+    )
+   }else{
+       return (
+           <Container>
+           <h2 style={{margin: 'auto', fontSize: 24, opacity: 0.5}}>No Product Yet</h2>
+           </Container>
+       )
+   }
 }
 
 export default FavoriteProduct
