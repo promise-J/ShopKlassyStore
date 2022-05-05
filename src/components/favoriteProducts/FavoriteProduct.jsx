@@ -25,7 +25,6 @@ const FavoriteProduct = ()=>{
     },[isLogged])
 
 
-    if(products.length > 0){
    return (
     <Container>
     {
@@ -35,13 +34,7 @@ const FavoriteProduct = ()=>{
     }
     </Container>
     )
-   }else{
-       return (
-           <Container>
-           <h2 style={{margin: 'auto', fontSize: 24, opacity: 0.5}}>No Product Yet</h2>
-           </Container>
-       )
-   }
+  
 }
 
 export default FavoriteProduct

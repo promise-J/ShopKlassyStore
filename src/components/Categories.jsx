@@ -32,7 +32,6 @@ const Categories = () => {
         isLogged && getProducts()
     }, [isLogged])
 
-        if (products.length > 0) {
             return (
                 <Container>
                     {
@@ -42,13 +41,6 @@ const Categories = () => {
                     }
                 </Container>
             )
-        } else {
-            return (
-                <Container>
-                    <h2 style={{margin: 'auto', fontSize: 24, opacity: 0.2}}>No Favorite Products</h2>
-                </Container>
-            )
-        }
     }
 
     export default Categories
