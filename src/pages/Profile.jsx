@@ -150,7 +150,6 @@ const Profile = () => {
   
     const handleSubmit = async(e)=>{
         e.preventDefault()
-         console.log(data)
         try {
             let formData = new FormData()
             formData.append('file', img)

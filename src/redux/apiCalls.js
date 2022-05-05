@@ -16,11 +16,17 @@ export const login = async(dispatch, user)=>{
     }
 }
 
-export const fetchUser = async()=>{
-    const res = await publicRequest.get('/auth/info', {headers: {
-        Authorization: cookie.get('shopKlassToken')
-    }})
-    return res.data.user
+export const fetchUser = async(dispatch)=>{
+    try {       
+        const res = await publicRequest.get('/auth/info', {headers: {
+            Authorization: cookie.get('shopKlassToken')
+        }})
+        return res.data.user
+    } catch (error) {
+        await publicRequest.get("/auth/logout")
+        cookie.remove('shopKlassToken')
+        dispatch(logoutSuccess())
+    }
 }
 
 export const register = async(dipatch, user)=>{

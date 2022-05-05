@@ -29,7 +29,7 @@ function App() {
     if (!currentUser && isLogged) {
       const getUser = async () => {
         dispatch(loginStart());
-        return fetchUser().then((user) => {
+        return fetchUser(dispatch).then((user) => {
           dispatch(loginSuccess(user));
           setFetching(false);
         });
