@@ -23,7 +23,10 @@ const FavoriteProduct = ()=>{
         }
         isLogged && getProducts()
     },[isLogged])
-
+   
+   if(!isLogged){
+       return <h2 style={{textAlign: 'center', margin: 'auto', fontSize: 24, opacity: 0.5}}>Please Login to add a favorite</h2>
+   }
 
    return (
     <Container>

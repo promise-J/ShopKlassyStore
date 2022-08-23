@@ -81,6 +81,7 @@ const ProfileImg = styled.img`
     height: 30px;
     width: 30px;
     object-fit: cover;
+    border-radius: 50%;
     margin-left: 10px;
 `
 

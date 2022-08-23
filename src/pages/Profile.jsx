@@ -1,12 +1,11 @@
 import {useEffect, useState} from 'react'
 import styled from 'styled-components'
-import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
 import {  tablet } from "../responsive"
 import {useSelector} from 'react-redux'
 import { ArrowDownward, ArrowUpward } from '@material-ui/icons'
 import { CircularProgress } from '@material-ui/core'
-import { publicRequest, imgRequest } from '../apiRequest'
+import { publicRequest } from '../apiRequest'
 
 const Container = styled.div`
 min-height: 100vh;
@@ -23,16 +22,14 @@ const Wrapper = styled.div`
     height: 80%;
     padding: 30px;
     flex: 1;
-    ${tablet({flexDirection: 'column'})}
+    ${tablet({flexDirection: 'column', padding: 30, width: '100%'})}
 `
 const Left = styled.div`
-    border: 1px solid black;
     flex: 1;
     display: flex;
     flex-direction: column;
 `
 const Right = styled.div`
-    border: 1px solid black;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -43,13 +40,18 @@ const ImgContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid black;
+    position: relative;
 `
 const Img = styled.img`
-    width: 60px;
-    height: 60px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
     object-fit: contain;
+    position: absolute;
+    right: 30%;
+    border: gray 1px solid;
+    top: 0;
+    ${tablet({height: '100px', width: '100px', left: 10})}
 `
 
 const LeftInfo = styled.div`
@@ -90,6 +92,8 @@ const FormItem = styled.div`
 const FormItemInput = styled.input`
     width: 45%;
     margin: 5px;
+    padding: 5px;
+    ${tablet({width: '40%'})}
 `
 const FormItemButton = styled.button`
     width: 45%;
@@ -97,25 +101,23 @@ const FormItemButton = styled.button`
 `
 
 const Profile = () => {
-    const initialState = {img: null, username: '', email: '', password: ''}
+    const [user, setUser] = useState(null)
     const {currentUser} = useSelector(state=> state.user)
+    const initialState = {img: null, username: '', email: '', password: ''}
     const [showVerify, setShowVerify] = useState(false)
     const [imgPrev, setImgPrev] = useState('')
     const [imgLoad, setImgLoad] = useState(false)
     const [data, setData] = useState(initialState)
+    const [initValue, setInitValue] = useState(initialState)
     const [imgErr, setImgErr] = useState('')
     const [copied, setCopied] = useState(false)
-    const [user, setUser] = useState(null)
     const [phoneNumber, setPhoneNumber] = useState(0)
-    // const [cEmail, setCEmail] = useState('')
     const [code, setCode] = useState('')
     const [viewCodeArea, setViewCodeArea] = useState(false)
 
     const {img, email, password, username} = data
     
-    useEffect(()=>{
-        setUser(currentUser)
-    },[currentUser])
+
 
     const handleInputChange = (e)=>{
         const {value, name} = e.target
@@ -123,6 +125,7 @@ const Profile = () => {
     }
     
     const handleImgChange = async(e)=>{
+        console.log(e.target.files[0])
         const file = e.target.files[0]
         if(file.size > 1024 * 1024){
                 setData({...data, img: null})
@@ -153,16 +156,18 @@ const Profile = () => {
         try {
             let formData = new FormData()
             formData.append('file', img)
-            // if(user.publicId){
-                //     const deleted = await imgRequest.post('/api/delete_avatar', {publicId: user?.publicId})
-            //     console.log(deleted)
-            // }
+           
             if(img){
                 setImgLoad(true)
-                const res = await imgRequest.post('/api/upload_avatar', formData)
+                const res = await publicRequest.post('/api/upload_avatar', formData)
                 if(res.status===200){
-                    const update = await publicRequest.put(`/user/${currentUser._id}`, {...data, password: password && password, img: img && res.data.secure_url, publicId: img && res.data.public_id})
-                    // console.log(res)
+                    const update = await publicRequest.put(`/user/${currentUser._id}`, {
+                        password: password && password,
+                        img: img && res.data.secure_url,
+                        publicId: img && res.data.public_id,
+                        email: email ? email : user?.email,
+                        username: username ? username : user?.username
+                    })
                     setData({...data, img: null})
                     setImgPrev('')
                     setImgLoad(false)
@@ -227,7 +232,7 @@ const Profile = () => {
                         <LeftInfoItemValue>{user?.email}</LeftInfoItemValue>
                     </LeftInfoItems>
                     <LeftInfoItems>
-                        <LeftInfoItem>Favourite Products:   {user?.favorite.length}</LeftInfoItem>
+                        <LeftInfoItem>Favourite Products:   {user?.favorite?.length}</LeftInfoItem>
                     </LeftInfoItems>
                     <LeftInfoItems>
                         <LeftInfoItem>Status</LeftInfoItem>
@@ -272,9 +277,9 @@ const Profile = () => {
                 <RightInfo>
                     <form onSubmit={handleSubmit}>
                       <FormItem onSubmit={handleSubmit}>
-                        <FormItemInput onChange={handleInputChange} name='username' value={username} style={{width: '92%'}} type="text" placeholder='Username' />
-                        <FormItemInput onChange={handleInputChange} name='email' value={email} type="text" placeholder='Email' />
-                        <FormItemInput onChange={handleInputChange} name='password' value={password} type="text" placeholder='password' />
+                        <FormItemInput onChange={handleInputChange} name='username' value={username} style={{width: '92%'}} type="text" placeholder={user?.username} />
+                        <FormItemInput onChange={handleInputChange} name='email' value={email} type="text" placeholder={user?.email} />
+                        <FormItemInput onChange={handleInputChange} name='password' value={password} type="password" placeholder='password' />
                         <FormItemButton style={{width: '92%'}}>Save</FormItemButton>
                       </FormItem>
                     </form>
@@ -282,7 +287,6 @@ const Profile = () => {
             </Right>
         </Wrapper>
     </Container>
-    <Footer />
     </>
   )
 }
